@@ -1,0 +1,60 @@
+section .data
+msg db 'Resultado: ', 0 ; Mensaje que se imprimirá
+newline db 0xA ; Caracter de nueva línea
+
+section .bss
+res resb 4 ; Reserva espacio para el resultado
+
+section .text
+global _start
+_start:
+; Instrucciones aritméticas
+mov eax, 10 ; Cargar 10 en EAX
+mov ebx, 5 ; Cargar 5 en EBX
+add eax, ebx ; Sumar EBX a EAX (10 + 5 = 15)
+
+; Instrucción lógica (AND)
+and eax, 0xF ; AND de EAX con 0xF (15 & 15 = 15)
+
+; Instrucciones de manipulación de bits
+shl eax, 1 ; Desplazar EAX a la izquierda (15 << 1 =
+30)
+
+; Guardar el resultado en la sección .bss
+mov [res], eax ; Almacenar el resultado en la dirección
+'res'
+
+; Llamar a la rutina para imprimir el resultado
+mov eax, 4 ; Syscall para escribir
+mov ebx, 1 ; Usar la salida estándar (pantalla)
+mov ecx, msg ; Dirección del mensaje a imprimir
+mov edx, 11 ; Longitud del mensaje
+int 0x80 ; Llamar a la interrupción del sistema
+para imprimir
+
+; Imprimir el número (resultado almacenado en 'res')
+mov eax, [res] ; Cargar el resultado en EAX
+add eax, '0' ; Convertir el número en carácter ASCII
+mov [res], eax ; Almacenar el carácter convertido
+
+mov eax, 4 ; Syscall para escribir
+mov ebx, 1 ; Usar la salida estándar
+mov ecx, res ; Dirección del resultado
+mov edx, 1 ; Longitud de 1 carácter
+int 0x80 ; Llamar a la interrupción del sistema
+para imprimir el número
+
+; Imprimir nueva línea
+mov eax, 4 ; Syscall para escribir
+
+mov ebx, 1 ; Usar la salida estándar
+mov ecx, newline ; Dirección de la nueva línea
+mov edx, 1 ; Longitud de 1 carácter
+int 0x80 ; Llamar a la interrupción del sistema
+para imprimir nueva línea
+
+; Terminar el programa
+mov eax, 1 ; Syscall para salir
+xor ebx, ebx ; Código de salida 0
+int 0x80 ; Llamar a la interrupción del sistema
+para terminar el programa
