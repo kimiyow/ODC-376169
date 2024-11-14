@@ -1,0 +1,7 @@
+Modo de direccionamiento inmediato:
+mov al, '@' ; Cargar '@' directamente en AL
+mov [buffer], al ; Almacenar el carácter en el buffer
+
+Modo de direccionamiento indirecto:
+mov eax, 64 ; Cargar 64 (ASCII de '@') en EAX
+mov [buffer], al ; Almacenar el carácter en el buffer
