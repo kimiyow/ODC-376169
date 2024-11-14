@@ -1,0 +1,11 @@
+section .data
+buffer db 'A', '\', '$', '&', '1' ; Define un buffer con los
+caracteres deseados
+
+; (resto del código permanece igual)
+; Imprimir cada carácter del buffer
+mov eax, 4 ; Llamada al sistema para escribir
+mov ebx, 1 ; Salida estándar (stdout)
+mov ecx, buffer ; Buffer que contiene los caracteres
+mov edx, 5 ; Longitud de 5 caracteres a imprimir
+int 0x80 ; Llamada al sistema
