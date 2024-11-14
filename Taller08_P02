@@ -1,0 +1,53 @@
+section .data
+msg db 'Resultado: ', 0 ; Mensaje que se imprimirá
+newline db 0xA ; Caracter de nueva línea
+
+section .bss
+res resb 1 ; Espacio para un único carácter
+
+section .text
+global _start
+_start:
+; Imprimir 'l'
+mov byte [res], 'l' ; Almacenar 'l' en res
+call print_char ; Llamar a la rutina para imprimir
+
+; Imprimir 'D'
+mov byte [res], 'D' ; Almacenar 'D' en res
+call print_char ; Llamar a la rutina para imprimir
+
+; Imprimir 'B'
+
+mov byte [res], 'B' ; Almacenar 'B' en res
+call print_char ; Llamar a la rutina para imprimir
+
+; Imprimir '4'
+mov byte [res], '4' ; Almacenar '4' en res
+call print_char ; Llamar a la rutina para imprimir
+
+; Imprimir '2'
+mov byte [res], '2' ; Almacenar '2' en res
+call print_char ; Llamar a la rutina para imprimir
+
+; Imprimir nueva línea
+mov eax, 4 ; Syscall para escribir
+mov ebx, 1 ; Salida estándar
+mov ecx, newline ; Dirección de la nueva línea
+mov edx, 1 ; Longitud de 1 carácter
+int 0x80 ; Llamar a la interrupción del sistema
+para imprimir nueva línea
+
+; Terminar el programa
+mov eax, 1 ; Syscall para salir
+xor ebx, ebx ; Código de salida 0
+int 0x80 ; Llamar a la interrupción del sistema
+para terminar el programa
+
+print_char:
+mov eax, 4 ; Syscall para escribir
+mov ebx, 1 ; Salida estándar
+mov ecx, res ; Dirección del carácter
+mov edx, 1 ; Longitud de 1 carácter
+int 0x80 ; Llamar a la interrupción del sistema
+para imprimir
+ret ; Regresar de la subrutina
