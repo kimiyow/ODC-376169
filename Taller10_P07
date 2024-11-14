@@ -1,0 +1,38 @@
+section .data
+num1 db 5 ; Primer número
+num2 db 3 ; Segundo número
+result db 0 ; Resultado de la suma
+msg db "Resultado: ", 0
+zeroMsg db "Esto es un cero", 10 ; Mensaje "Esto es un cero"
+section .text
+global _start
+_start:
+; Sumar los números
+mov al, [num1] ; Cargar num1 en al
+add al, [num2] ; Sumar num2 a al
+mov [result], al ; Guardar el resultado en result
+; Verificar si el resultado es 0
+CMP al, 0
+JE print_zero ; Salta si el resultado es 0
+; Si no es 0, imprimir el resultado
+mov eax, 4 ; Syscall para escribir
+mov ebx, 1 ; Salida estándar
+mov ecx, msg ; Dirección del mensaje
+mov edx, 11 ; Longitud del mensaje
+
+int 0x80
+; Imprimir el número resultado
+; [Código para imprimir el número de result]
+jmp end_program
+print_zero:
+; Imprimir "Esto es un cero"
+mov eax, 4 ; Syscall para escribir
+mov ebx, 1 ; Salida estándar
+mov ecx, zeroMsg ; Dirección del mensaje
+mov edx, 18 ; Longitud del mensaje
+int 0x80
+end_program:
+; Finaliza el programa
+mov eax, 1 ; Syscall de salida
+xor ebx, ebx ; Código de salida 0
+int 0x80
