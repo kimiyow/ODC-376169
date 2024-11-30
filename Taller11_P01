@@ -1,0 +1,37 @@
+section .data
+num1 db 5 ; Definir el primer número (5)
+num2 db 11 ; Definir el segundo número (11)
+result db 0 ; Reservar espacio para almacenar el resultado (inicializado a 0)
+message db "Resultado: ", 0 ; Definir el mensaje a imprimir ("Resultado: ")
+section .bss
+buffer resb 4 ; Reservar 4 bytes de espacio para almacenar temporalmente los caracteres del
+número
+section .text
+global _start ; Declarar la etiqueta _start, que es el punto de entrada del programa
+%macro PRINT_STRING 1
+mov eax, 4 ; Código de sistema para escribir en la salida estándar (sys_write)
+mov ebx, 1 ; Descriptor de archivo para la salida estándar (stdout)
+mov ecx, %1 ; Dirección de la cadena a imprimir (pasada como argumento)
+mov edx, 13 ; Longitud de la cadena (en este caso "Resultado: " tiene 13 caracteres)
+int 0x80 ; Llamada al sistema (int 0x80) para escribir la cadena en la salida estándar
+%endmacro
+%macro PRINT_NUMBER 1
+mov eax, %1 ; Mover el valor del número (pasado como argumento) a eax
+add eax, '0' ; Convertir el número a su representación en ASCII sumando '0' (48)
+mov [buffer], eax ; Guardar el valor convertido en el buffer
+mov eax, 4 ; Código de sistema para escribir en la salida estándar (sys_write)
+mov ebx, 1 ; Descriptor de archivo para la salida estándar (stdout)
+mov ecx, buffer ; Dirección del buffer que contiene el número convertido
+mov edx, 1 ; Longitud de 1 carácter (ya que estamos imprimiendo un solo dígito)
+int 0x80 ; Llamada al sistema para escribir el número en la salida estándar
+%endmacro
+_start:
+mov al, [num1] ; Cargar el valor de num1 en el registro al
+add al, [num2] ; Sumar al valor de num2 a al
+mov [result], al ; Guardar el resultado de la suma en la variable result
+PRINT_STRING message ; Llamar al macro PRINT_STRING para imprimir "Resultado: "
+PRINT_NUMBER [result] ; Llamar al macro PRINT_NUMBER para imprimir el valor de result
+; Salir del programa
+mov eax, 1 ; Código de sistema para salir del programa (sys_exit)
+mov ebx, 0 ; Código de salida (0 indica éxito)
+int 0x80 ; Llamada al sistema para finalizar la ejecución del programa
