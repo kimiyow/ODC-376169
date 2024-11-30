@@ -1,0 +1,92 @@
+section .data
+mensaje_entrada db "Ingrese el primer numero: ", 0
+mensaje_entrada2 db "Ingrese el segundo numero: ", 0
+mensaje_salida db "El resultado de la suma es: ", 0
+salto_linea db 10, 0 ; Salto de línea
+section .bss
+num1 resb 4 ; Reserva espacio para el primer número (hasta 4 caracteres)
+num2 resb 4 ; Reserva espacio para el segundo número (hasta 4 caracteres)
+resultado resb 4 ; Reserva espacio para el resultado (hasta 4 caracteres)
+section .text
+global _start
+_start:
+; Imprimir mensaje para ingresar el primer número
+mov eax, 4 ; syscall para escribir
+mov ebx, 1 ; salida estándar (pantalla)
+mov ecx, mensaje_entrada ; dirección del mensaje
+mov edx, 24 ; longitud del mensaje
+int 0x80 ; llamada al sistema
+; Leer el primer número desde la entrada estándar
+mov eax, 3 ; syscall para leer
+mov ebx, 0 ; entrada estándar (teclado)
+mov ecx, num1 ; dirección donde almacenar el número
+mov edx, 4 ; leer hasta 4 caracteres (número con hasta 4 dígitos)
+int 0x80 ; llamada al sistema
+; Imprimir mensaje para ingresar el segundo número
+mov eax, 4 ; syscall para escribir
+mov ebx, 1 ; salida estándar (pantalla)
+mov ecx, mensaje_entrada2 ; dirección del mensaje
+
+mov edx, 26 ; longitud del mensaje
+int 0x80 ; llamada al sistema
+; Leer el segundo número desde la entrada estándar
+mov eax, 3 ; syscall para leer
+mov ebx, 0 ; entrada estándar (teclado)
+mov ecx, num2 ; dirección donde almacenar el número
+mov edx, 4 ; leer hasta 4 caracteres (número con hasta 4 dígitos)
+int 0x80 ; llamada al sistema
+; Convertir el primer número de ASCII a entero
+xor eax, eax ; Limpiar eax (sólo para precaución)
+mov ecx, num1 ; Dirección del primer número
+convert_num1:
+movzx edx, byte [ecx] ; Cargar el siguiente byte (carácter)
+cmp dl, 10 ; Comparar con el salto de línea (fin de la cadena)
+je end_convert_num1 ; Si es salto de línea, terminamos
+sub dl, '0' ; Convertir de ASCII a número
+imul eax, eax, 10 ; Multiplicar el número actual por 10 (desplazar por un dígito)
+add eax, edx ; Sumar el nuevo dígito
+inc ecx ; Mover al siguiente carácter
+jmp convert_num1 ; Repetir el proceso para el siguiente carácter
+end_convert_num1:
+; Convertir el segundo número de ASCII a entero
+xor ebx, ebx ; Limpiar ebx (sólo para precaución)
+mov ecx, num2 ; Dirección del segundo número
+convert_num2:
+movzx edx, byte [ecx] ; Cargar el siguiente byte (carácter)
+cmp dl, 10 ; Comparar con el salto de línea (fin de la cadena)
+je end_convert_num2 ; Si es salto de línea, terminamos
+sub dl, '0' ; Convertir de ASCII a número
+imul ebx, ebx, 10 ; Multiplicar el número actual por 10 (desplazar por un dígito)
+add ebx, edx ; Sumar el nuevo dígito
+inc ecx ; Mover al siguiente carácter
+jmp convert_num2 ; Repetir el proceso para el siguiente carácter
+end_convert_num2:
+; Realizar la suma
+add eax, ebx ; Sumar el primer número (eax) al segundo número (ebx)
+; Convertir el resultado a ASCII
+mov ecx, resultado ; Dirección para almacenar el resultado
+add eax, '0' ; Convertir el resultado a ASCII
+mov [ecx], al ; Guardar el primer dígito del resultado
+; Imprimir el mensaje de salida
+mov eax, 4 ; syscall para escribir
+
+mov ebx, 1 ; salida estándar (pantalla)
+mov ecx, mensaje_salida ; dirección del mensaje
+mov edx, 26 ; longitud del mensaje
+int 0x80 ; llamada al sistema
+; Imprimir el resultado
+mov eax, 4 ; syscall para escribir
+mov ebx, 1 ; salida estándar (pantalla)
+mov ecx, resultado ; dirección donde se encuentra el resultado
+mov edx, 1 ; longitud del resultado (un solo carácter)
+int 0x80 ; llamada al sistema
+; Imprimir salto de línea
+mov eax, 4 ; syscall para escribir
+mov ebx, 1 ; salida estándar (pantalla)
+mov ecx, salto_linea ; dirección del salto de línea
+mov edx, 1 ; longitud del salto de línea
+int 0x80 ; llamada al sistema
+; Finalizar el programa
+mov eax, 1 ; syscall para salir
+xor ebx, ebx ; código de salida 0
+int 0x80 ; llamada al sistema
